@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solicitud de Reparación | DxMóvil</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 25px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        #priceResult {
+            font-size: 18px;
+            font-weight: bold;
+            color: #e74c3c;
+            margin: 15px 0;
+            text-align: center;
+        }
+        .hidden {
+            display: none;
+        }
+        .confirmation {
+            background: #2ecc71;
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            text-align: center;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📱 Solicitud de Reparación</h1>
+        <form id="repairForm" action="https://formsubmit.co/dxmovil369@gmail.com" method="POST">
+            <input type="hidden" name="_captcha" value="false">
+            <input type="hidden" name="_subject" value="Nueva solicitud de reparación - DxMóvil">
+            <input type="hidden" name="_template" value="table">
+
+            <div class="form-group">
+                <label for="name">Nombre completo *</label>
+                <input type="text" id="name" name="Nombre" required>
+            </div>
+
+            <div class="form-group">
+                <label for="phone">Teléfono *</label>
+                <input type="tel" id="phone" name="Teléfono" required>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Correo electrónico</label>
+                <input type="email" id="email" name="Correo">
+            </div>
+
+            <div class="form-group">
+                <label for="deviceType">Dispositivo *</label>
+                <select id="deviceType" name="Dispositivo" required>
+                    <option value="">Seleccione...</option>
+                    <option value="iPhone">iPhone</option>
+                    <option value="Samsung">Samsung</option>
+                    <option value="Xiaomi">Xiaomi</option>
+                    <option value="Huawei">Huawei</option>
+                    <option value="Otra marca">Otra marca</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="deviceModel">Modelo (ej: iPhone 12, Galaxy S21) *</label>
+                <input type="text" id="deviceModel" name="Modelo" required>
+            </div>
+
+            <div class="form-group">
+                <label for="issueType">Tipo de falla *</label>
+                <select id="issueType" name="Falla" required>
+                    <option value="">Seleccione...</option>
+                    <option value="Pantalla rota">Pantalla rota</option>
+                    <option value="Batería defectuosa">Batería defectuosa</option>
+                    <option value="Problema de carga">Problema de carga</option>
+                    <option value="Falla de software">Falla de software</option>
+                    <option value="Agua dañó el equipo">Daño por agua</option>
+                    <option value="Otro problema">Otro problema</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="issueDescription">Descripción detallada del problema *</label>
+                <textarea id="issueDescription" name="Descripción" rows="4" required></textarea>
+            </div>
+
+            <div id="priceResult">Presupuesto: $0</div>
+
+            <button type="submit">Enviar solicitud</button>
+        </form>
+
+        <div id="confirmation" class="confirmation hidden">
+            ¡Gracias! Tu solicitud ha sido enviada. Nos contactaremos contigo pronto.
+        </div>
+    </div>
+
+    <script>
+        // Precios según falla (modifícalos según tus tarifas)
+        const priceList = {
+            "Pantalla rota": 150000,
+            "Batería defectuosa": 80000,
+            "Problema de carga": 50000,
+            "Falla de software": 60000,
+            "Agua dañó el equipo": 120000,
+            "Otro problema": 0 // El cliente debe consultar
+        };
+
+        // Mostrar precio cuando seleccionen una falla
+        document.getElementById('issueType').addEventListener('change', function() {
+            const issue = this.value;
+            const priceElement = document.getElementById('priceResult');
+            
+            if (issue && priceList[issue] !== undefined) {
+                const price = priceList[issue];
+                priceElement.textContent = price > 0 
+                    ? `Presupuesto: $${price.toLocaleString()}` 
+                    : "Por favor, describe el problema para cotizar";
+            } else {
+                priceElement.textContent = "Presupuesto: $0";
+            }
+        });
+
+        // Enviar formulario sin recargar
+        document.getElementById('repairForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            fetch(this.action, {
+                method: 'POST',
+                body: new FormData(this),
+            })
+            .then(response => {
+                if (response.ok) {
+                    document.getElementById('repairForm').classList.add('hidden');
+                    document.getElementById('confirmation').classList.remove('hidden');
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    </script>
+</body>
+</html>
